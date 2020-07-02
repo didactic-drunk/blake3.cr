@@ -1,0 +1,23 @@
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
+
+# Libraries don't need dependency lock
+# Dependencies will be locked in applications that use them
+/shard.lock
+
+
+#Added by cargo
+
+/target
+Cargo.lock
+
+
+#Added by cargo
+#
+#already existing elements were commented out
+
+#/target
+#Cargo.lock
