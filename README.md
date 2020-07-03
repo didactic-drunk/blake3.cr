@@ -9,7 +9,7 @@ WARNING: This is new software.  Not much testing has been done but the API uses 
 If you're reading this past 2020-10 it's probably stable and this warning is old.
 
 ## Features
-- [x] Fast.  ~2x faster than Sodium::Digest::Blake2b.
+- [x] Fast.  ~2x faster than [Sodium::Digest::Blake2b](https://github.com/didactic-drunk/sodium.cr#blake2b).
 - [x] Uses Crystal's Digest API.
 - [x] Keyed digests.
 - [ ] Key derivation.
@@ -19,6 +19,11 @@ If you're reading this past 2020-10 it's probably stable and this warning is old
 
 ## Todo
 - [ ] Use official specs.
+
+## Speed
+
+[examples/blake3_hash.cr](https://github.com/didactic-drunk/blake3.cr/blob/master/examples/blake3_hash.cr) 
+is approximately the same speed as [b3sum](https://github.com/BLAKE3-team/BLAKE3#the-b3sum-utility) with 1 thread or mmap disabled.
 
 ## Installation
 
