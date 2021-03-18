@@ -1,6 +1,7 @@
-require "digest/base"
+require "digest"
 
-class Digest::Blake3 < ::Digest::Base
+class Digest::Blake3 < ::Digest
+  {{ Digest.has_constant?(:Base) ? "::Base" : "" }} # Crystal < 0.36 compatible
   @[Link(ldflags: "-L#{__DIR__}/../../BLAKE3/c -lblake3")]
   lib Lib
     fun init = blake3_hasher_init(ptr : Void*)

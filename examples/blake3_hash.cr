@@ -12,7 +12,7 @@ optp.on("--buf-size=INT", "") { |arg| buf_size = arg.to_i }
 optp.on("--digest=NAME", "") { |arg| digest_name = arg }
 optp.parse
 
-class Digest::Null < Digest::Base
+class Digest::Null < Digest
   def update_impl(data : Bytes) : Nil
   end
 
