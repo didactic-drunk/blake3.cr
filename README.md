@@ -35,7 +35,7 @@ is approximately the same speed as [b3sum](https://github.com/BLAKE3-team/BLAKE3
 ## Usage
 
 ```crystal
-require "digest/blake3"
+require "blake3"
 ```
 
 ```crystal

@@ -1,0 +1,1 @@
+require "./digest/blake3"
