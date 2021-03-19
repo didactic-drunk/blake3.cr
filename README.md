@@ -5,9 +5,6 @@
 
 Blake3 using the official [BLAKE3 c](https://github.com/BLAKE3-team/BLAKE3/tree/master/c) implementation.
 
-WARNING: This is new software.  Not much testing has been done but the API uses crystal's Digest API and is unlikely to change.
-If you're reading this past 2020-10 it's probably stable and this warning is old.
-
 ## Features
 - [x] Fast.  ~2x faster than [Sodium::Digest::Blake2b](https://github.com/didactic-drunk/sodium.cr#blake2b).
 - [x] Uses Crystal's Digest API.
@@ -15,10 +12,8 @@ If you're reading this past 2020-10 it's probably stable and this warning is old
 - [ ] Key derivation.
 - [x] Configurable final size.
 - [ ] Streaming final output.
+- [x] Tested against official test vectors.
 - [x] Builds a blake3 c static library.
-
-## Todo
-- [ ] Use official specs.
 
 ## Speed
 
@@ -48,6 +43,8 @@ digest = Digest::Blake3.new
 digest.update data
 p digest.final.hexstring
 ```
+
+For further API documentation see [Crystal's Digest API](https://crystal-lang.org/api/0.36.1/Digest.html)
 
 ## Contributing
 

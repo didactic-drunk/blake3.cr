@@ -14,3 +14,7 @@ license: MIT
 
 scripts:
   postinstall: "./build/make.sh"
+
+development_dependencies:
+  json_mapping:
+    github: crystal-lang/json_mapping.cr
