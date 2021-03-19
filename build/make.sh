@@ -2,7 +2,7 @@
 
 set -e
 
-git submodule update --init --recursive
+#git submodule update --init --recursive
 
-cd BLAKE3/c
-make -f ../../build/Makefile
+cd blake3c
+make -f ../build/Makefile

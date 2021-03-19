@@ -1,9 +1,16 @@
 NAME=blake3
 CC=gcc
-CFLAGS=-O3 -Wall -Wextra -std=c11 -pedantic
+CFLAGS=-O3 -Wall -Wextra -std=c11 -pedantic -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fPIE -fvisibility=hidden
 TARGETS=
 ASM_TARGETS=
-EXTRAFLAGS=
+EXTRAFLAGS=-Wa,--noexecstack
+
+ifdef BLAKE3_NO_SSE2
+EXTRAFLAGS += -DBLAKE3_NO_SSE2
+else
+TARGETS += blake3_sse2.o
+ASM_TARGETS += blake3_sse2_x86-64_unix.S
+endif
 
 ifdef BLAKE3_NO_SSE41
 EXTRAFLAGS += -DBLAKE3_NO_SSE41
@@ -38,7 +45,7 @@ blake3: blake3.c blake3_dispatch.c blake3_portable.c main.c $(TARGETS)
 	$(CC) $(CFLAGS) $(EXTRAFLAGS) $^ -o $(NAME)
 
 libblake3.a: blake3.o blake3_dispatch.o blake3_portable.o $(TARGETS)
-	ar rcs $@ blake3.o blake3_dispatch.o blake3_portable.o $(TARGETS)
+	ar rcs $@ blake3.o blake3_dispatch.o blake3_portable.o $(TARGETS) $(ASM_TARGETS)
 
 blake3_sse41.o: blake3_sse41.c
 	$(CC) $(CFLAGS) $(EXTRAFLAGS) -c $^ -o $@ -msse4.1
@@ -63,5 +70,5 @@ test_asm: CFLAGS += -DBLAKE3_TESTING -fsanitize=address,undefined
 test_asm: asm
 	./test.py
 
-clean: 
+clean:
 	rm -f $(NAME) *.o
