@@ -1,20 +1,15 @@
+---
 name: blake3
-version: 0.1.0
-
+version: 1.0.0
 authors:
 - Didactic Drunk <1479616+didactic-drunk@users.noreply.github.com>
-
 targets:
   blake3_hash:
     main: examples/blake3_hash.cr
-
 crystal: 0.35.0
-
 license: MIT
-
 scripts:
   postinstall: "./build/make.sh"
-
 development_dependencies:
   json_mapping:
     github: crystal-lang/json_mapping.cr
