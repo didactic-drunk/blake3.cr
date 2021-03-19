@@ -44,6 +44,19 @@ digest.update data
 p digest.final.hexstring
 ```
 
+```crystal
+output_size = 1024
+digest = Digest::Blake3.new(output_size)
+digest.update data
+p digest.final.hexstring => ...a.very.long.string...
+```
+   
+```crystal
+digest = Digest::Blake3.new(key: "super secret exactly 32 byte key")
+digest.update data
+p digest.final.hexstring
+```
+
 For further API documentation see [Crystal's Digest API](https://crystal-lang.org/api/0.36.1/Digest.html)
 
 ## Contributing
