@@ -2,7 +2,6 @@ require "./spec_helper"
 require "../src/digest/blake3"
 require "json_mapping"
 
-
 class TestVectors
   class Case
     JSON.mapping(
@@ -58,7 +57,7 @@ describe Digest::Blake3 do
     max_isize = vectors.cases.map { |c| c.input_len }.sum
     ibuf = Slice(UInt8).new max_isize
     max_isize.times do |i|
-      ibuf[i] = (i % 251).to_u8;
+      ibuf[i] = (i % 251).to_u8
     end
 
     vectors.cases.each do |c|
