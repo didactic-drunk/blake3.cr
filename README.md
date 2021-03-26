@@ -61,7 +61,7 @@ For further API documentation see [Crystal's Digest API](https://crystal-lang.or
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/blake3/fork>)
+1. Fork it (<https://github.com/didactic-drunk/blake3/fork>)
 2. **Install a formatting check git hook (ln -sf ../../scripts/git/pre-commit .git/hooks)**
 3. Create your feature branch (`git checkout -b my-new-feature`)
 4. Commit your changes (`git commit -am 'Add some feature'`)
