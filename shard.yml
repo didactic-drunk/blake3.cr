@@ -1,12 +1,12 @@
 ---
 name: blake3
-version: 1.0.2
+version: 1.0.3
 authors:
 - Didactic Drunk <1479616+didactic-drunk@users.noreply.github.com>
 targets:
   blake3_hash:
     main: examples/blake3_hash.cr
-crystal: 0.36.0
+crystal: ">= 0.36.0"
 license: MIT
 scripts:
   postinstall: "./build/make.sh"
