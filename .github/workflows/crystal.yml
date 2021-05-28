@@ -21,6 +21,6 @@ jobs:
     - name: Run tests
       run: crystal spec
     - name: Run bulid
-      run: crystal build
+      run: shards build
     - name: Run format
       run: crystal tool format --check
