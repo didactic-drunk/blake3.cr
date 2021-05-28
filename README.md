@@ -1,5 +1,5 @@
 # BLAKE3
-[![Build Status](https://travis-ci.org/didactic-drunk/blake3.cr.svg?branch=master)](https://travis-ci.org/didactic-drunk/blake3.cr)
+[![Build Status](https://github.com/didactic-drunk/blake3.cr/actions/workflows/crystal.yml/badge.svg)](https://github.com/didactic-drunk/blake3.cr/actions/workflows/crystal.yml)
 [![GitHub release](https://img.shields.io/github/release/didactic-drunk/blake3.cr.svg)](https://github.com/didactic-drunk/blake3.cr/releases)
 [![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://didactic-drunk.github.io/blake3.cr/)
 
