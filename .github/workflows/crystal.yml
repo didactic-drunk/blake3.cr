@@ -19,8 +19,9 @@ jobs:
     - name: Install dependencies
       run: shards install && ./build/make.sh
     - name: Run tests
-      run: crystal spec
+      run: crystal spec -Dpreview_mt --order random --error-on-warnings
     - name: Run bulid
-      run: shards build
+      run: shards build -Dpreview_mt
     - name: Run format
       run: crystal tool format --check
+
