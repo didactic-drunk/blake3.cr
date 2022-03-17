@@ -1,7 +1,9 @@
 # BLAKE3
-[![Build Status](https://github.com/didactic-drunk/blake3.cr/actions/workflows/crystal.yml/badge.svg)](https://github.com/didactic-drunk/blake3.cr/actions/workflows/crystal.yml)
+[![Crystal CI](https://github.com/didactic-drunk/blake3.cr/actions/workflows/crystal.yml/badge.svg)](https://github.com/didactic-drunk/blake3.cr/actions/workflows/crystal.yml)
 [![GitHub release](https://img.shields.io/github/release/didactic-drunk/blake3.cr.svg)](https://github.com/didactic-drunk/blake3.cr/releases)
+![GitHub commits since latest release (by date) for a branch](https://img.shields.io/github/commits-since/didactic-drunk/blake3.cr/latest)
 [![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://didactic-drunk.github.io/blake3.cr/master)
+
 
 Blake3 using the official [BLAKE3 c](https://github.com/BLAKE3-team/BLAKE3/tree/master/c) implementation.
 
