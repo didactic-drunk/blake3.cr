@@ -20,22 +20,11 @@ class Digest::Blake3 < ::Digest
   end
 
   KEY_SIZE = 32
-
   OUT_SIZE = 32
-
-  # :nodoc:
-  enum Init
-    Normal
-    Keyed
-    Derive
-  end
 
   LIB_VERSION = SemanticVersion.parse(String.new(Lib.version))
 
   @hasher = StaticArray(UInt8, 1912).new 0
-  @init = Init::Normal
-  @key = StaticArray(UInt8, 32).new 0
-  @context : Bytes?
 
   getter digest_size : Int32
 
@@ -47,14 +36,13 @@ class Digest::Blake3 < ::Digest
 
       slice = k.to_slice
       raise ArgumentError.new("key must be #{KEY_SIZE} bytes, got #{slice.bytesize}") if slice.bytesize != KEY_SIZE
-      @key.to_slice.copy_from slice
-      @init = Init::Keyed
+      Lib.init_keyed self, slice
     elsif c = context
-      raise "not implemented"
-      @init = Init::Derive
+      raise "not tested"
+      Lib.init_derive_key self, c
+    else
+      Lib.init self
     end
-
-    init_impl
   end
 
   protected def update_impl(data : Bytes) : Nil
@@ -63,17 +51,6 @@ class Digest::Blake3 < ::Digest
 
   protected def final_impl(data : Bytes) : Nil
     Lib.final self, data, data.bytesize
-  end
-
-  protected def init_impl : Nil
-    case @init
-    when Init::Normal
-      Lib.init self
-    when Init::Keyed
-      Lib.init_keyed self, @key.to_slice
-    when Init::Derive
-      Lib.init_derive_key self, @context.not_nil!
-    end
   end
 
   protected def reset_impl : Nil
