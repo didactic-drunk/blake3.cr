@@ -1,6 +1,7 @@
 NAME=blake3
 CC=gcc
 CFLAGS=-O3 -Wall -Wextra -std=c11 -pedantic -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fPIE -fvisibility=hidden
+LDFLAGS=-pie -Wl,-z,relro,-z,now
 TARGETS=
 ASM_TARGETS=
 EXTRAFLAGS=-Wa,--noexecstack
@@ -34,8 +35,12 @@ ASM_TARGETS += blake3_avx512_x86-64_unix.S
 endif
 
 ifdef BLAKE3_USE_NEON
-EXTRAFLAGS += -DBLAKE3_USE_NEON
+EXTRAFLAGS += -DBLAKE3_USE_NEON=1
 TARGETS += blake3_neon.o
+endif
+
+ifdef BLAKE3_NO_NEON
+EXTRAFLAGS += -DBLAKE3_USE_NEON=0
 endif
 
 
@@ -46,6 +51,9 @@ blake3: blake3.c blake3_dispatch.c blake3_portable.c main.c $(TARGETS)
 
 libblake3.a: blake3.o blake3_dispatch.o blake3_portable.o $(TARGETS)
 	ar rcs $@ blake3.o blake3_dispatch.o blake3_portable.o $(TARGETS) $(ASM_TARGETS)
+
+blake3_sse2.o: blake3_sse2.c
+	$(CC) $(CFLAGS) $(EXTRAFLAGS) -c $^ -o $@ -msse2
 
 blake3_sse41.o: blake3_sse41.c
 	$(CC) $(CFLAGS) $(EXTRAFLAGS) -c $^ -o $@ -msse4.1
@@ -64,7 +72,7 @@ test: all
 	./test.py
 
 asm: blake3.c blake3_dispatch.c blake3_portable.c main.c $(ASM_TARGETS)
-	$(CC) $(CFLAGS) $(EXTRAFLAGS) $^ -o $(NAME)
+	$(CC) $(CFLAGS) $(EXTRAFLAGS) $^ -o $(NAME) $(LDFLAGS)
 
 test_asm: CFLAGS += -DBLAKE3_TESTING -fsanitize=address,undefined
 test_asm: asm

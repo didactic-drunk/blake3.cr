@@ -1,9 +1,12 @@
 require "digest"
+require "semantic_version"
 
 class Digest::Blake3 < ::Digest
   {{ Digest.has_constant?(:Base) ? "::Base" : "" }} # Crystal < 0.36 compatible
   @[Link(ldflags: "-L#{__DIR__}/../../blake3c -lblake3")]
   lib Lib
+    fun version = blake3_version : LibC::UChar*
+
     fun init = blake3_hasher_init(ptr : Void*)
     fun init_keyed = blake3_hasher_init_keyed(ptr : Void*, key : LibC::UChar*)
     fun init_derive_key = blake3_hasher_init_derive_key(ptr : Void*, context : LibC::UChar*)
@@ -12,23 +15,16 @@ class Digest::Blake3 < ::Digest
 
     fun final = blake3_hasher_finalize(ptr : Void*, output : LibC::UChar*, size : LibC::SizeT)
     fun final_seek = blake3_hasher_finalize_seek(ptr : Void*, seek : UInt64, output : LibC::UChar*, size : LibC::SizeT)
+
+    fun reset = blake3_hasher_reset(ptr : Void*)
   end
 
   KEY_SIZE = 32
-
   OUT_SIZE = 32
 
-  # :nodoc:
-  enum Init
-    Normal
-    Keyed
-    Derive
-  end
+  LIB_VERSION = SemanticVersion.parse(String.new(Lib.version))
 
   @hasher = StaticArray(UInt8, 1912).new 0
-  @init = Init::Normal
-  @key = StaticArray(UInt8, 32).new 0
-  @context : Bytes?
 
   getter digest_size : Int32
 
@@ -40,14 +36,13 @@ class Digest::Blake3 < ::Digest
 
       slice = k.to_slice
       raise ArgumentError.new("key must be #{KEY_SIZE} bytes, got #{slice.bytesize}") if slice.bytesize != KEY_SIZE
-      @key.to_slice.copy_from slice
-      @init = Init::Keyed
+      Lib.init_keyed self, slice
     elsif c = context
-      raise "not implemented"
-      @init = Init::Derive
+      raise "not tested"
+      Lib.init_derive_key self, c
+    else
+      Lib.init self
     end
-
-    reset
   end
 
   protected def update_impl(data : Bytes) : Nil
@@ -59,14 +54,7 @@ class Digest::Blake3 < ::Digest
   end
 
   protected def reset_impl : Nil
-    case @init
-    when Init::Normal
-      Lib.init self
-    when Init::Keyed
-      Lib.init_keyed self, @key.to_slice
-    when Init::Derive
-      Lib.init_derive_key self, @context.not_nil!
-    end
+    Lib.reset self
   end
 
   # :nodoc:
