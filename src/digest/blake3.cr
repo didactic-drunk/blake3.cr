@@ -1,9 +1,12 @@
 require "digest"
+require "semantic_version"
 
 class Digest::Blake3 < ::Digest
   {{ Digest.has_constant?(:Base) ? "::Base" : "" }} # Crystal < 0.36 compatible
   @[Link(ldflags: "-L#{__DIR__}/../../blake3c -lblake3")]
   lib Lib
+    fun version = blake3_version : LibC::UChar*
+
     fun init = blake3_hasher_init(ptr : Void*)
     fun init_keyed = blake3_hasher_init_keyed(ptr : Void*, key : LibC::UChar*)
     fun init_derive_key = blake3_hasher_init_derive_key(ptr : Void*, context : LibC::UChar*)
@@ -12,6 +15,8 @@ class Digest::Blake3 < ::Digest
 
     fun final = blake3_hasher_finalize(ptr : Void*, output : LibC::UChar*, size : LibC::SizeT)
     fun final_seek = blake3_hasher_finalize_seek(ptr : Void*, seek : UInt64, output : LibC::UChar*, size : LibC::SizeT)
+
+    fun reset = blake3_hasher_reset(ptr : Void*)
   end
 
   KEY_SIZE = 32
@@ -24,6 +29,8 @@ class Digest::Blake3 < ::Digest
     Keyed
     Derive
   end
+
+  LIB_VERSION = SemanticVersion.parse(String.new(Lib.version))
 
   @hasher = StaticArray(UInt8, 1912).new 0
   @init = Init::Normal
@@ -47,7 +54,7 @@ class Digest::Blake3 < ::Digest
       @init = Init::Derive
     end
 
-    reset
+    init_impl
   end
 
   protected def update_impl(data : Bytes) : Nil
@@ -58,7 +65,7 @@ class Digest::Blake3 < ::Digest
     Lib.final self, data, data.bytesize
   end
 
-  protected def reset_impl : Nil
+  protected def init_impl : Nil
     case @init
     when Init::Normal
       Lib.init self
@@ -67,6 +74,10 @@ class Digest::Blake3 < ::Digest
     when Init::Derive
       Lib.init_derive_key self, @context.not_nil!
     end
+  end
+
+  protected def reset_impl : Nil
+    Lib.reset self
   end
 
   # :nodoc:
