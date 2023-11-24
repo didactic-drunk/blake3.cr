@@ -50,16 +50,16 @@ describe Digest::Blake3 do
     h1.should eq h2
   end
 
+  vectors = TestVectors.from_json(File.read(Path.new({{__DIR__}}).join("test_vectors.json")))
+
+  max_isize = vectors.cases.map { |c| c.input_len }.sum
+  ibuf = Slice(UInt8).new(max_isize)
+  max_isize.times do |i|
+    ibuf[i] = (i % 251).to_u8
+  end
+
   it "test vectors" do
     out_size = 131
-
-    vectors = TestVectors.from_json(File.read(Path.new({{__DIR__}}).join("test_vectors.json")))
-
-    max_isize = vectors.cases.map { |c| c.input_len }.sum
-    ibuf = Slice(UInt8).new max_isize
-    max_isize.times do |i|
-      ibuf[i] = (i % 251).to_u8
-    end
 
     vectors.cases.each do |c|
       d = Digest::Blake3.new(out_size)
@@ -69,9 +69,37 @@ describe Digest::Blake3 do
       d = Digest::Blake3.new(out_size, key: vectors.key)
       d.update ibuf[0, c.input_len]
       d.final.hexstring.should eq c.keyed_hash
+
+      d = Digest::Blake3.new(out_size, context: vectors.context_string)
+      d.update ibuf[0, c.input_len]
+      d.final.hexstring.should eq c.derive_key
     end
   end
 
   pending "derive key if anyone uses it" do
+  end
+
+  it ".digest" do
+    vectors.cases.each do |c|
+      Digest::Blake3.digest(ibuf[0, c.input_len], digest_size: 131).hexstring.should eq c.hash
+      Digest::Blake3.digest(ibuf[0, c.input_len], key: vectors.key, digest_size: 131).hexstring.should eq c.keyed_hash
+      Digest::Blake3.digest(ibuf[0, c.input_len], context: vectors.context_string, digest_size: 131).hexstring.should eq c.derive_key
+    end
+  end
+
+  it ".hexdigest" do
+    vectors.cases.each do |c|
+      Digest::Blake3.hexdigest(ibuf[0, c.input_len]).should eq c.hash[0, 64]
+      Digest::Blake3.hexdigest(ibuf[0, c.input_len], key: vectors.key).should eq c.keyed_hash[0, 64]
+      Digest::Blake3.hexdigest(ibuf[0, c.input_len], context: vectors.context_string).should eq c.derive_key[0, 64]
+    end
+  end
+
+  it ".base64digest" do
+    vectors.cases.each do |c|
+      Digest::Blake3.base64digest(ibuf[0, c.input_len]).should eq Base64.strict_encode(c.hash[0, 64].hexbytes)
+      Digest::Blake3.base64digest(ibuf[0, c.input_len], key: vectors.key).should eq Base64.strict_encode(c.keyed_hash[0, 64].hexbytes)
+      Digest::Blake3.base64digest(ibuf[0, c.input_len], context: vectors.context_string).should eq Base64.strict_encode(c.derive_key[0, 64].hexbytes)
+    end
   end
 end
